@@ -25,19 +25,55 @@ class SimpleFacerec:
 
         # Store image encoding and names
         for img_path in images_path:
-            img = cv2.imread(img_path)
-            rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            try:
+                img = cv2.imread(img_path)
+                if img is None:
+                    continue
+                rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-            # Get the filename only from the initial file path.
-            basename = os.path.basename(img_path)
-            (filename, ext) = os.path.splitext(basename)
-            # Get encoding
-            img_encoding = face_recognition.face_encodings(rgb_img)[0]
-
-            # Store file name and file encoding
-            self.known_face_encodings.append(img_encoding)
-            self.known_face_names.append(filename)
+                # Get the filename only from the initial file path.
+                basename = os.path.basename(img_path)
+                (filename, ext) = os.path.splitext(basename)
+                
+                # Get encoding safely
+                encodings = face_recognition.face_encodings(rgb_img)
+                if len(encodings) > 0:
+                    img_encoding = encodings[0]
+                    self.known_face_encodings.append(img_encoding)
+                    self.known_face_names.append(filename)
+                else:
+                    print("Warning: No face found in {}, skipping.".format(img_path))
+            except Exception as e:
+                print("Error loading {}: {}".format(img_path, e))
         print("Encoding images loaded")
+
+    def load_single_image(self, img_path):
+        """
+        Load a single image and append/replace its encoding dynamically.
+        """
+        try:
+            img = cv2.imread(img_path)
+            if img is None:
+                return False
+            rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            encodings = face_recognition.face_encodings(rgb_img)
+            if len(encodings) > 0:
+                img_encoding = encodings[0]
+                basename = os.path.basename(img_path)
+                (filename, ext) = os.path.splitext(basename)
+                
+                if filename in self.known_face_names:
+                    idx = self.known_face_names.index(filename)
+                    self.known_face_encodings[idx] = img_encoding
+                else:
+                    self.known_face_encodings.append(img_encoding)
+                    self.known_face_names.append(filename)
+                return True
+            return False
+        except Exception as e:
+            print("Error loading single image {}: {}".format(img_path, e))
+            return False
+
 
     def detect_known_faces(self, frame):
         small_frame = cv2.resize(frame, (0, 0), fx=self.frame_resizing, fy=self.frame_resizing)
