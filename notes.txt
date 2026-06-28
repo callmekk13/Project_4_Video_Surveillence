@@ -1,0 +1,34 @@
+Video Surveillance and Tracking System - Technical & Design Notes
+==================================================================
+
+1. Overview
+-----------
+This application is a real-time CCTV video surveillance and facial recognition tracking system. It integrates OpenCV for video capturing, facial recognition library (built on dlib) for matching faces, SQLite for local database persistence, and Tkinter for a sleek dark-themed GUI dashboard.
+
+2. Architecture & Components
+----------------------------
+* `app.py`: This is the central entrypoint. It defines `SurveillanceApp` (Tkinter GUI interface) using a Catppuccin Mocha-inspired dark palette (#1e1e2e for main background, #252538 for cards, and #89b4fa for the light blue highlight color).
+* `simple_facerec.py`: Encapsulates the facial recognition logic. It loads registered JPEG/JPG images from the `images/` folder, creates 128-dimension face encodings using face_recognition (dlib), and matches real-time camera frames against them using Euclidean distance with a default tolerance of 0.6.
+* `data_handling.py` / `data.db`: Handles SQLite storage. It maintains the `USER` table:
+    - `id` (TEXT, Primary Key): The user's ID/Roll Number.
+    - `name` (TEXT): The registered member's full name.
+    - `location` (TEXT): The last known camera/CCTV zone where they were detected.
+    - `time` (TEXT): The Unix epoch timestamp of their last detection.
+
+3. GUI Dashboard Tab Descriptions
+---------------------------------
+The dashboard is split into three main workspaces:
+* Tab 1: LIVE STREAM
+  Displays the live camera stream inside a viewport. It draws a green bounding box around registered faces with their names and a red box around "Unknown" individuals. On the right, it has a "Live Session Log" showing real-time detection events (Name, Zone, and Timestamp). When a known face is detected, it updates their record in the SQLite database automatically.
+* Tab 2: REGISTER MEMBER
+  Allows enrollment of a new member. The operator enters a Name and Roll No/ID, selects a profile image (*.jpg), and clicks "Register". The profile picture is copied to the `images/` directory renamed as `<RollNo>.jpg` and the database record is inserted.
+* Tab 3: DATABASE RECORDS
+  Provides a clean, interactive treeview table of all user entries. A search bar allows filtering by name/ID. Clicking a database row opens a side inspection panel showing the user's name, ID, last location, formatted time, and displays their saved profile image.
+
+4. Setup & Running Instructions
+-------------------------------
+1. Ensure you are in the project folder and activate the virtual environment:
+   `source .venv/bin/activate`
+2. Run the unified dashboard:
+   `python3 app.py`
+3. If running into issues with the camera stream, verify your camera connection and select the correct camera source ID (0-4) from the dropdown list.

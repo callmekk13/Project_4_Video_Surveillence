@@ -1,0 +1,22 @@
+Video Surveillance and Tracking System - Directory Structure
+============================================================
+
+Video-Surveillance-and-tracking-system/
+│
+├── README.md               - Project overview, installation, and usage instructions.
+├── app.py                  - Main interactive dark-themed tkinter dashboard (includes live camera stream, member registration, and database search tabs).
+├── main.py                 - Legacy CLI implementation of CCTV camera facial recognition loop.
+├── gui.py                  - Legacy Tkinter form for register member actions.
+├── Track.py                - Legacy Tkinter GUI window to search member details by Roll No.
+├── simple_facerec.py       - Facial recognition engine using the 'face_recognition' library.
+├── data_handling.py        - Helper script to initialize and manage the SQLite database.
+├── data.db                 - SQLite database storing user tracking records (id, name, location, time).
+├── structure.txt           - This file, documenting the file structure.
+├── notes.txt               - Detailed notes on app features, database architecture, and usage.
+│
+├── images/                 - Folder containing registered profile pictures (named as "<id>.jpg" or "<id>.jpeg").
+│
+└── snapshots/              - Folder containing step-by-step screenshots of the working system.
+    ├── step_1_live_stream.png      - Screenshot of the Live Stream and real-time detection log tab.
+    ├── step_2_register_member.png  - Screenshot of the Register Member tab with image upload.
+    └── step_3_database_records.png - Screenshot of the Database Records list and inspect profile tab.
